@@ -1,20 +1,30 @@
 // src/context/ParkingContext.jsx
-import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useMemo, useCallback, useEffect } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { getTodayISO } from '../utils/dateUtils';
 
-const TOTAL_PUESTOS = 50;
+const TOTAL_CUBIERTA = 30;
+const TOTAL_NORMAL = 20;
+const TOTAL_PUESTOS = TOTAL_CUBIERTA + TOTAL_NORMAL;
 
 function crearPuestosIniciales() {
-  return Array.from({ length: TOTAL_PUESTOS }, (_, i) => ({
-    id: i + 1,
-    ocupado: false,
-    clienteId: null,
-    placa: null,
-    tipo: null, // 'mensual' | 'eventual'
-    fechaFin: null, // solo aplica a clientes mensuales, alimenta el semáforo
-    horaEntrada: null,
-  }));
+  const base = (seccion, cantidad, offsetId) =>
+    Array.from({ length: cantidad }, (_, i) => ({
+      id: offsetId + i + 1, // id único global, se usa como key y para localStorage
+      numero: i + 1, // número dentro de la sección (para el código C-01, N-01, ...)
+      seccion, // 'cubierta' | 'normal'
+      ocupado: false,
+      clienteId: null,
+      placa: null,
+      tipo: null, // 'mensual' | 'eventual'
+      fechaFin: null, // solo aplica a clientes mensuales, alimenta el semáforo
+      horaEntrada: null,
+    }));
+
+  return [
+    ...base('cubierta', TOTAL_CUBIERTA, 0),
+    ...base('normal', TOTAL_NORMAL, TOTAL_CUBIERTA),
+  ];
 }
 
 const ParkingContext = createContext(null);
@@ -28,6 +38,23 @@ export function ParkingProvider({ children }) {
   const [clientes, setClientes] = useLocalStorage('parking_clientes', []);
   const [puestos, setPuestos] = useLocalStorage('parking_puestos', crearPuestosIniciales());
   const [movimientos, setMovimientos] = useLocalStorage('parking_movimientos', []);
+
+  // Migración: si en localStorage quedaron puestos del esquema anterior
+  // (sin campo "seccion"), los reclasificamos: los primeros 30 -> cubierta,
+  // los siguientes 20 -> normal, conservando ocupación/placa/contrato.
+  useEffect(() => {
+    if (puestos.length && puestos[0].seccion === undefined) {
+      setPuestos((prev) => {
+        if (prev.length !== TOTAL_PUESTOS) return crearPuestosIniciales();
+        return prev.map((p, idx) => {
+          const seccion = idx < TOTAL_CUBIERTA ? 'cubierta' : 'normal';
+          const numero = idx < TOTAL_CUBIERTA ? idx + 1 : idx - TOTAL_CUBIERTA + 1;
+          return { ...p, seccion, numero };
+        });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ---- Acciones ----
 
@@ -135,6 +162,23 @@ export function ParkingProvider({ children }) {
   const puestosOcupados = useMemo(() => puestos.filter((p) => p.ocupado).length, [puestos]);
   const puestosLibres = TOTAL_PUESTOS - puestosOcupados;
 
+  const resumenPorSeccion = useMemo(() => {
+    const cubierta = puestos.filter((p) => p.seccion === 'cubierta');
+    const normal = puestos.filter((p) => p.seccion === 'normal');
+    return {
+      cubierta: {
+        total: cubierta.length,
+        ocupados: cubierta.filter((p) => p.ocupado).length,
+        libres: cubierta.filter((p) => !p.ocupado).length,
+      },
+      normal: {
+        total: normal.length,
+        ocupados: normal.filter((p) => p.ocupado).length,
+        libres: normal.filter((p) => !p.ocupado).length,
+      },
+    };
+  }, [puestos]);
+
   const value = {
     settings,
     setSettings,
@@ -145,6 +189,7 @@ export function ParkingProvider({ children }) {
     totalVentasHoy,
     puestosOcupados,
     puestosLibres,
+    resumenPorSeccion,
     totalPuestos: TOTAL_PUESTOS,
     registrarIngreso,
     liberarPuesto,
