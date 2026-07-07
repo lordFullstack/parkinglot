@@ -12,6 +12,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
   const [tipo, setTipo] = useState('eventual'); // 'eventual' | 'mensual'
   const [clienteId, setClienteId] = useState('');
   const [nombreCliente, setNombreCliente] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [monto, setMonto] = useState('');
 
@@ -21,6 +22,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
     setTipo('eventual');
     setClienteId('');
     setNombreCliente('');
+    setTelefono('');
     setFechaFin('');
     setMonto('');
   }, [puesto?.id]);
@@ -34,6 +36,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
     const c = clientesMensuales.find((cl) => String(cl.id) === String(id));
     if (c) {
       setNombreCliente(c.nombre);
+      setTelefono(c.telefono || '');
       setFechaFin(c.fechaFin);
     }
   };
@@ -48,6 +51,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
       tipo,
       clienteId: clienteId ? Number(clienteId) : null,
       nombreCliente: nombreCliente.trim(),
+      telefono: telefono.trim(),
       fechaFin: tipo === 'mensual' ? fechaFin : null,
       monto: monto ? Number(monto) : 0,
     });
@@ -183,6 +187,17 @@ export default function VehicleDrawer({ puesto, onClose }) {
                     />
                   </label>
                 )}
+
+                <label className="block text-sm text-slate-400">
+                  Teléfono (WhatsApp)
+                  <input
+                    type="tel"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    placeholder="300 123 4567"
+                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </label>
 
                 <label className="block text-sm text-slate-400">
                   Fecha fin de contrato
