@@ -3,7 +3,6 @@ name: Deploy a GitHub Pages
 on:
   push:
     branches: [main]
-  # Permite lanzarlo manualmente desde la pestaña "Actions" en GitHub
   workflow_dispatch:
 
 permissions:
@@ -26,10 +25,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm install
 
       - name: Compilar (vite build)
         run: npm run build
