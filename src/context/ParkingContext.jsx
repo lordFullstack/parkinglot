@@ -2,6 +2,8 @@
 import React, { createContext, useContext, useMemo, useCallback, useEffect } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { getTodayISO } from '../utils/dateUtils';
+import { calcularEstadoSemaforo } from '../hooks/useParkingStatus';
+import { getCodigoPuesto } from '../utils/puestoUtils';
 
 const TOTAL_CUBIERTA = 30;
 const TOTAL_NORMAL = 20;
@@ -38,6 +40,7 @@ export function ParkingProvider({ children }) {
   const [clientes, setClientes] = useLocalStorage('parking_clientes', []);
   const [puestos, setPuestos] = useLocalStorage('parking_puestos', crearPuestosIniciales());
   const [movimientos, setMovimientos] = useLocalStorage('parking_movimientos', []);
+  const [eventos, setEventos] = useLocalStorage('parking_eventos', []);
 
   // Migración: si en localStorage quedaron puestos del esquema anterior
   // (sin campo "seccion"), los reclasificamos: los primeros 30 -> cubierta,
@@ -59,8 +62,9 @@ export function ParkingProvider({ children }) {
   // ---- Acciones ----
 
   const registrarIngreso = useCallback(
-    ({ puestoId, placa, tipo, clienteId, nombreCliente, fechaFin, monto }) => {
+    ({ puestoId, placa, tipo, clienteId, nombreCliente, telefono, fechaFin, monto }) => {
       const ahora = new Date();
+      const puestoRef = puestos.find((p) => p.id === puestoId);
       let clienteIdFinal = clienteId || null;
 
       // Si es cliente mensual nuevo (sin clienteId existente), lo creamos en el maestro
@@ -68,11 +72,17 @@ export function ParkingProvider({ children }) {
         const nuevoCliente = {
           id: Date.now(),
           nombre: nombreCliente || placa,
+          telefono: telefono || '',
           fechaFin,
           tipo: 'mensual',
         };
         setClientes((prev) => [...prev, nuevoCliente]);
         clienteIdFinal = nuevoCliente.id;
+      } else if (tipo === 'mensual' && clienteIdFinal && telefono) {
+        // Cliente existente: si se capturó/editó el teléfono, lo actualizamos
+        setClientes((prev) =>
+          prev.map((c) => (c.id === clienteIdFinal ? { ...c, telefono } : c))
+        );
       }
 
       setPuestos((prev) =>
@@ -91,6 +101,18 @@ export function ParkingProvider({ children }) {
         )
       );
 
+      setEventos((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          puestoId,
+          seccion: puestoRef?.seccion || null,
+          tipo: 'ingreso',
+          fecha: getTodayISO(),
+          hora: ahora.toISOString(),
+        },
+      ]);
+
       if (monto && monto > 0) {
         setMovimientos((prev) => [
           ...prev,
@@ -105,7 +127,7 @@ export function ParkingProvider({ children }) {
         ]);
       }
     },
-    [setPuestos, setMovimientos, setClientes]
+    [puestos, setPuestos, setMovimientos, setClientes, setEventos]
   );
 
   const liberarPuesto = useCallback(
@@ -126,6 +148,18 @@ export function ParkingProvider({ children }) {
         ]);
       }
 
+      setEventos((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          puestoId,
+          seccion: puesto?.seccion || null,
+          tipo: 'salida',
+          fecha: getTodayISO(),
+          hora: new Date().toISOString(),
+        },
+      ]);
+
       setPuestos((prev) =>
         prev.map((p) =>
           p.id === puestoId
@@ -142,7 +176,14 @@ export function ParkingProvider({ children }) {
         )
       );
     },
-    [puestos, setPuestos, setMovimientos]
+    [puestos, setPuestos, setMovimientos, setEventos]
+  );
+
+  const actualizarCliente = useCallback(
+    (clienteId, cambios) => {
+      setClientes((prev) => prev.map((c) => (c.id === clienteId ? { ...c, ...cambios } : c)));
+    },
+    [setClientes]
   );
 
   // ---- Datos derivados (nunca persistidos, se recalculan en cada render) ----
@@ -179,17 +220,43 @@ export function ParkingProvider({ children }) {
     };
   }, [puestos]);
 
+  // Puestos mensuales en 'retrasado' o 'en-mora', con los datos del cliente
+  // ya resueltos (nombre, teléfono) para armar recordatorios de WhatsApp.
+  const clientesEnAlerta = useMemo(() => {
+    return puestos
+      .filter((p) => p.ocupado && p.tipo === 'mensual' && p.fechaFin)
+      .map((p) => {
+        const estado = calcularEstadoSemaforo(p.fechaFin);
+        const cliente = clientes.find((c) => c.id === p.clienteId) || null;
+        return {
+          puestoId: p.id,
+          codigo: getCodigoPuesto(p),
+          placa: p.placa,
+          fechaFin: p.fechaFin,
+          estado,
+          clienteId: cliente?.id || null,
+          nombre: cliente?.nombre || p.placa,
+          telefono: cliente?.telefono || '',
+        };
+      })
+      .filter((item) => item.estado.status === 'en-mora' || item.estado.status === 'retrasado')
+      .sort((a, b) => a.estado.diasRestantes - b.estado.diasRestantes);
+  }, [puestos, clientes]);
+
   const value = {
     settings,
     setSettings,
     clientes,
+    actualizarCliente,
     puestos,
     movimientos,
+    eventos,
     movimientosHoy,
     totalVentasHoy,
     puestosOcupados,
     puestosLibres,
     resumenPorSeccion,
+    clientesEnAlerta,
     totalPuestos: TOTAL_PUESTOS,
     registrarIngreso,
     liberarPuesto,
