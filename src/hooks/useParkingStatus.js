@@ -45,6 +45,33 @@ const SEMAFORO = {
 };
 
 /**
+ * calcularEstadoSemaforo — función PURA (no es un hook), reutilizable tanto
+ * dentro de useParkingStatus como en lógica derivada del Context (listas,
+ * recordatorios, etc.) donde no se puede invocar un hook.
+ */
+export function calcularEstadoSemaforo(fechaFin, opts = {}) {
+  const { treatNullAsAlDia = false } = opts;
+
+  if (!fechaFin) {
+    const base = treatNullAsAlDia ? SEMAFORO['al-dia'] : SEMAFORO.libre;
+    return { ...base, diasRestantes: null };
+  }
+
+  const dias = diffInDays(fechaFin);
+
+  let base;
+  if (dias < 0) {
+    base = SEMAFORO['en-mora'];
+  } else if (dias <= DIAS_ALERTA_RETRASO) {
+    base = SEMAFORO.retrasado;
+  } else {
+    base = SEMAFORO['al-dia'];
+  }
+
+  return { ...base, diasRestantes: dias };
+}
+
+/**
  * useParkingStatus
  * Calcula en tiempo real (derived state, nunca persistido) el estado del
  * semáforo de un contrato a partir de su fechaFin ('YYYY-MM-DD').
@@ -62,25 +89,10 @@ const SEMAFORO = {
 export default function useParkingStatus(fechaFin, opts = {}) {
   const { treatNullAsAlDia = false } = opts;
 
-  return useMemo(() => {
-    if (!fechaFin) {
-      const base = treatNullAsAlDia ? SEMAFORO['al-dia'] : SEMAFORO.libre;
-      return { ...base, diasRestantes: null };
-    }
-
-    const dias = diffInDays(fechaFin);
-
-    let base;
-    if (dias < 0) {
-      base = SEMAFORO['en-mora'];
-    } else if (dias <= DIAS_ALERTA_RETRASO) {
-      base = SEMAFORO.retrasado;
-    } else {
-      base = SEMAFORO['al-dia'];
-    }
-
-    return { ...base, diasRestantes: dias };
-  }, [fechaFin, treatNullAsAlDia]);
+  return useMemo(
+    () => calcularEstadoSemaforo(fechaFin, { treatNullAsAlDia }),
+    [fechaFin, treatNullAsAlDia]
+  );
 }
 
 export { SEMAFORO };
