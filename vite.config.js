@@ -7,5 +7,5 @@ import react from '@vitejs/plugin-react';
 // Si le pones otro nombre al repo, cambia el valor aquí abajo.
 export default defineConfig({
   plugins: [react()],
-  base: '/parqueadero/',
+  base: '/parkinglot/',
 });
