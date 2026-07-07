@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParking } from '../context/ParkingContext';
 import SemaforoBadge from './SemaforoBadge';
 import { formatCOP } from '../utils/dateUtils';
+import { getCodigoPuesto, getNombreSeccion } from '../utils/puestoUtils';
 
 export default function VehicleDrawer({ puesto, onClose }) {
   const { registrarIngreso, liberarPuesto, clientes } = useParking();
@@ -72,9 +73,10 @@ export default function VehicleDrawer({ puesto, onClose }) {
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-slate-700" />
 
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-slate-100">
-            Puesto {String(puesto.id).padStart(2, '0')}
-          </h2>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-100">{getCodigoPuesto(puesto)}</h2>
+            <p className="text-[11px] text-slate-500">{getNombreSeccion(puesto.seccion)}</p>
+          </div>
           {puesto.ocupado ? (
             <SemaforoBadge fechaFin={puesto.fechaFin} treatNullAsAlDia size="md" />
           ) : (

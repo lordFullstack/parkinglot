@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useParking } from '../context/ParkingContext';
 import useParkingStatus from '../hooks/useParkingStatus';
+import { getCodigoPuesto } from '../utils/puestoUtils';
 import VehicleDrawer from './VehicleDrawer';
 
 function PuestoButton({ puesto, onSelect }) {
@@ -20,7 +21,7 @@ function PuestoButton({ puesto, onSelect }) {
       onClick={() => onSelect(puesto)}
       className={`aspect-square rounded-xl flex flex-col items-center justify-center gap-0.5 transition-transform active:scale-95 ${baseClasses}`}
     >
-      <span className="text-sm font-bold">{String(puesto.id).padStart(2, '0')}</span>
+      <span className="text-sm font-bold">{getCodigoPuesto(puesto)}</span>
       {puesto.ocupado && (
         <span className="text-[9px] font-mono truncate max-w-[90%]">{puesto.placa}</span>
       )}
@@ -28,9 +29,30 @@ function PuestoButton({ puesto, onSelect }) {
   );
 }
 
+function SeccionGrid({ titulo, puestos, resumen, onSelect }) {
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-sm font-semibold text-slate-200">{titulo}</h3>
+        <span className="text-[11px] text-slate-500">
+          {resumen.ocupados} / {resumen.total} ocupados
+        </span>
+      </div>
+      <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+        {puestos.map((puesto) => (
+          <PuestoButton key={puesto.id} puesto={puesto} onSelect={onSelect} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ParkingGrid() {
-  const { puestos } = useParking();
+  const { puestos, resumenPorSeccion } = useParking();
   const [puestoSeleccionado, setPuestoSeleccionado] = useState(null);
+
+  const puestosCubierta = puestos.filter((p) => p.seccion === 'cubierta');
+  const puestosNormal = puestos.filter((p) => p.seccion === 'normal');
 
   return (
     <section>
@@ -49,11 +71,19 @@ export default function ParkingGrid() {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
-        {puestos.map((puesto) => (
-          <PuestoButton key={puesto.id} puesto={puesto} onSelect={setPuestoSeleccionado} />
-        ))}
-      </div>
+      <SeccionGrid
+        titulo="Cubierta"
+        puestos={puestosCubierta}
+        resumen={resumenPorSeccion.cubierta}
+        onSelect={setPuestoSeleccionado}
+      />
+
+      <SeccionGrid
+        titulo="Normal"
+        puestos={puestosNormal}
+        resumen={resumenPorSeccion.normal}
+        onSelect={setPuestoSeleccionado}
+      />
 
       {puestoSeleccionado && (
         <VehicleDrawer

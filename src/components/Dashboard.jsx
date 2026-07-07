@@ -3,6 +3,7 @@ import React from 'react';
 import { useParking } from '../context/ParkingContext';
 import SemaforoBadge from './SemaforoBadge';
 import { formatCOP, formatHora } from '../utils/dateUtils';
+import { getCodigoPuesto } from '../utils/puestoUtils';
 
 function SummaryCard({ label, value, sub, accent }) {
   return (
@@ -20,8 +21,8 @@ export default function Dashboard() {
     movimientosHoy,
     totalVentasHoy,
     puestosOcupados,
-    puestosLibres,
     totalPuestos,
+    resumenPorSeccion,
     puestos,
   } = useParking();
 
@@ -53,7 +54,7 @@ export default function Dashboard() {
         <SummaryCard
           label="Puestos ocupados"
           value={`${puestosOcupados} / ${totalPuestos}`}
-          sub={`${puestosLibres} libres`}
+          sub={`Cubierta ${resumenPorSeccion.cubierta.ocupados}/${resumenPorSeccion.cubierta.total} · Normal ${resumenPorSeccion.normal.ocupados}/${resumenPorSeccion.normal.total}`}
         />
       </div>
 
@@ -77,7 +78,7 @@ export default function Dashboard() {
                   <div className="min-w-0">
                     <p className="font-mono text-sm text-slate-100 truncate">{m.placa}</p>
                     <p className="text-[11px] text-slate-500">
-                      Puesto {String(m.puestoId).padStart(2, '0')} · {formatHora(m.hora)}
+                      {puesto ? getCodigoPuesto(puesto) : `Puesto ${m.puestoId}`} · {formatHora(m.hora)}
                     </p>
                   </div>
 
