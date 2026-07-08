@@ -30,9 +30,18 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-slate-100">{settings.nombreEmpresa}</h1>
-          {settings.nit && <p className="text-xs text-slate-500">NIT {settings.nit}</p>}
+        <div className="flex items-center gap-3">
+          {settings.logoBase64 && (
+            <img
+              src={settings.logoBase64}
+              alt={`Logo de ${settings.nombreEmpresa}`}
+              className="h-10 w-10 rounded-lg object-contain bg-white/5 border border-slate-700"
+            />
+          )}
+          <div>
+            <h1 className="text-xl font-bold text-slate-100">{settings.nombreEmpresa}</h1>
+            {settings.nit && <p className="text-xs text-slate-500">NIT {settings.nit}</p>}
+          </div>
         </div>
         <span className="text-xs text-slate-500">
           {new Date().toLocaleDateString('es-CO', {
