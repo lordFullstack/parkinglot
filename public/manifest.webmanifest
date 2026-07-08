@@ -1,0 +1,37 @@
+{
+  "name": "El Tremendo Rumbon — Parqueadero",
+  "short_name": "Parqueadero",
+  "description": "Panel de control del parqueadero: puestos, ventas, cotizaciones y recordatorios.",
+  "start_url": "/parkinglot/",
+  "scope": "/parkinglot/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/parkinglot/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/parkinglot/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/parkinglot/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/parkinglot/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
