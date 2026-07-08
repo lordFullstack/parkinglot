@@ -5,13 +5,13 @@ import QuoteGenerator from './QuoteGenerator';
 import ReminderPanel from './ReminderPanel';
 
 const SUBTABS = [
-  { key: 'ocupacion', label: 'Ocupación' },
+  { key: 'ventas', label: 'Ventas' },
   { key: 'cotizar', label: 'Cotizar' },
   { key: 'recordatorios', label: 'Recordatorios' },
 ];
 
 export default function Herramientas() {
-  const [sub, setSub] = useState('ocupacion');
+  const [sub, setSub] = useState('ventas');
 
   return (
     <div>
@@ -29,7 +29,7 @@ export default function Herramientas() {
         ))}
       </div>
 
-      {sub === 'ocupacion' && <OccupancyChart />}
+      {sub === 'ventas' && <OccupancyChart />}
       {sub === 'cotizar' && <QuoteGenerator />}
       {sub === 'recordatorios' && <ReminderPanel />}
     </div>
