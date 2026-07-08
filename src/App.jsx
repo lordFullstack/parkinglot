@@ -18,7 +18,7 @@ function TabButton({ active, onClick, children }) {
     <button
       onClick={onClick}
       className={`flex-1 rounded-lg py-2.5 text-[13px] font-medium transition-colors ${
-        active ? 'bg-emerald-500/15 text-emerald-400' : 'text-slate-500'
+        active ? 'bg-yellow-500/15 text-yellow-400' : 'text-slate-500'
       }`}
     >
       {children}
