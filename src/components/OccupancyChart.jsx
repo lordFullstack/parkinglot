@@ -2,15 +2,16 @@
 import React, { useState } from 'react';
 import {
   ResponsiveContainer,
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
 } from 'recharts';
 import { useParking } from '../context/ParkingContext';
-import useOcupacionHistorial from '../hooks/useOcupacionHistorial';
+import useIngresosHistorial from '../hooks/useIngresosHistorial';
+import { formatCOP } from '../utils/dateUtils';
 
 const PERIODOS = [
   { key: 'diario', label: 'Diario' },
@@ -18,19 +19,26 @@ const PERIODOS = [
   { key: 'anual', label: 'Anual' },
 ];
 
+// Formato corto para el eje Y: 15000 -> "15k", 2500000 -> "2.5M"
+function formatCOPCorto(valor) {
+  if (valor >= 1_000_000) return `${(valor / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (valor >= 1_000) return `${Math.round(valor / 1_000)}k`;
+  return `${valor}`;
+}
+
 export default function OccupancyChart() {
-  const { eventos } = useParking();
-  const { diario, semanal, anual } = useOcupacionHistorial(eventos);
+  const { movimientos } = useParking();
+  const { diario, semanal, anual } = useIngresosHistorial(movimientos);
   const [periodo, setPeriodo] = useState('semanal');
 
   const data = { diario, semanal, anual }[periodo];
-  const totalPeriodo = data.reduce((sum, d) => sum + d.ingresos, 0);
+  const totalPeriodo = data.reduce((sum, d) => sum + d.monto, 0);
 
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-semibold text-slate-100">Ocupación 📈</h2>
-        <span className="text-[11px] text-slate-500">{totalPeriodo} ingresos</span>
+        <h2 className="text-base font-semibold text-slate-100">Ventas 📈</h2>
+        <span className="text-[11px] text-slate-500">{formatCOP(totalPeriodo)}</span>
       </div>
 
       <div className="flex gap-1 mb-4 rounded-lg bg-slate-800/60 p-1">
@@ -51,7 +59,7 @@ export default function OccupancyChart() {
 
       <div className="rounded-xl border border-slate-700 bg-slate-800/40 p-3">
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+          <LineChart data={data} margin={{ top: 4, right: 8, left: -12, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
             <XAxis
               dataKey="label"
@@ -64,8 +72,8 @@ export default function OccupancyChart() {
               tick={{ fill: '#64748b', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
-              allowDecimals={false}
-              width={28}
+              width={38}
+              tickFormatter={formatCOPCorto}
             />
             <Tooltip
               contentStyle={{
@@ -75,16 +83,23 @@ export default function OccupancyChart() {
                 fontSize: 12,
               }}
               labelStyle={{ color: '#e2e8f0' }}
-              formatter={(value) => [`${value} vehículo(s)`, 'Ingresos']}
+              formatter={(value) => [formatCOP(value), 'Ventas']}
             />
-            <Bar dataKey="ingresos" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={28} />
-          </BarChart>
+            <Line
+              type="monotone"
+              dataKey="monto"
+              stroke="#10b981"
+              strokeWidth={2}
+              dot={{ r: 2, fill: '#10b981' }}
+              activeDot={{ r: 4 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
 
       <p className="text-[11px] text-slate-500 mt-2">
-        Mide vehículos que ingresaron por periodo (proxy de ocupación/tráfico). Solo cuenta
-        movimientos registrados desde que activaste esta función.
+        Suma de cobros registrados (ingresos/salidas con monto) por periodo. Solo cuenta
+        movimientos guardados desde que activaste esta función.
       </p>
     </section>
   );
