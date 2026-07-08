@@ -21,7 +21,7 @@ export default function Herramientas() {
             key={t.key}
             onClick={() => setSub(t.key)}
             className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${
-              sub === t.key ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500'
+              sub === t.key ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-500'
             }`}
           >
             {t.label}

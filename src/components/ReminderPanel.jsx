@@ -29,7 +29,7 @@ function TelefonoFaltante({ item, onGuardar }) {
         value={valor}
         onChange={(e) => setValor(e.target.value)}
         placeholder="Agregar teléfono"
-        className="flex-1 rounded-lg bg-slate-800 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="flex-1 rounded-lg bg-slate-800 border border-slate-700 px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
       <button
         onClick={() => valor.trim() && onGuardar(item, valor.trim())}
@@ -93,7 +93,7 @@ export default function ReminderPanel() {
                   className={`mt-2 w-full rounded-lg py-2 text-xs font-medium transition-colors ${
                     enviados[item.puestoId]
                       ? 'bg-slate-700 text-slate-400'
-                      : 'bg-emerald-500/90 hover:bg-emerald-500 text-white'
+                      : 'bg-yellow-500/90 hover:bg-yellow-500 text-slate-900'
                   }`}
                 >
                   {enviados[item.puestoId] ? 'Recordatorio enviado ✓' : 'Enviar recordatorio por WhatsApp'}

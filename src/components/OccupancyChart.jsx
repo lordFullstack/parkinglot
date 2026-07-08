@@ -48,7 +48,7 @@ export default function OccupancyChart() {
             onClick={() => setPeriodo(p.key)}
             className={`flex-1 rounded-md py-1.5 text-xs font-medium transition-colors ${
               periodo === p.key
-                ? 'bg-emerald-500/20 text-emerald-400'
+                ? 'bg-yellow-500/20 text-yellow-400'
                 : 'text-slate-500'
             }`}
           >
@@ -59,7 +59,7 @@ export default function OccupancyChart() {
 
       <div className="rounded-xl border border-slate-700 bg-slate-800/40 p-3">
         <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={data} margin={{ top: 4, right: 8, left: -12, bottom: 0 }}>
+          <LineChart data={data} margin={{ top: 4, right: 8, left: 4, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
             <XAxis
               dataKey="label"
@@ -72,7 +72,7 @@ export default function OccupancyChart() {
               tick={{ fill: '#64748b', fontSize: 10 }}
               axisLine={false}
               tickLine={false}
-              width={38}
+              width={48}
               tickFormatter={formatCOPCorto}
             />
             <Tooltip
@@ -88,9 +88,9 @@ export default function OccupancyChart() {
             <Line
               type="monotone"
               dataKey="monto"
-              stroke="#10b981"
+              stroke="#eab308"
               strokeWidth={2}
-              dot={{ r: 2, fill: '#10b981' }}
+              dot={{ r: 2, fill: '#eab308' }}
               activeDot={{ r: 4 }}
             />
           </LineChart>

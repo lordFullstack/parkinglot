@@ -71,7 +71,7 @@ export default function QuoteGenerator() {
           value={nombreCliente}
           onChange={(e) => setNombreCliente(e.target.value)}
           placeholder="Nombre completo"
-          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </label>
 
@@ -82,7 +82,7 @@ export default function QuoteGenerator() {
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
           placeholder="300 123 4567"
-          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </label>
 
@@ -96,7 +96,7 @@ export default function QuoteGenerator() {
                 type="button"
                 onClick={() => setSeccion(s)}
                 className={`flex-1 rounded-md py-2 text-xs font-medium capitalize transition-colors ${
-                  seccion === s ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500'
+                  seccion === s ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-500'
                 }`}
               >
                 {s}
@@ -117,7 +117,7 @@ export default function QuoteGenerator() {
                 type="button"
                 onClick={() => setTipoContrato(t.key)}
                 className={`flex-1 rounded-md py-2 text-xs font-medium transition-colors ${
-                  tipoContrato === t.key ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500'
+                  tipoContrato === t.key ? 'bg-yellow-500/20 text-yellow-400' : 'text-slate-500'
                 }`}
               >
                 {t.label}
@@ -135,7 +135,7 @@ export default function QuoteGenerator() {
           value={tarifa}
           onChange={(e) => setTarifa(e.target.value)}
           placeholder="150000"
-          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </label>
 
@@ -146,7 +146,7 @@ export default function QuoteGenerator() {
             type="date"
             value={vigenciaDesde}
             onChange={(e) => setVigenciaDesde(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
         </label>
         <label className="block text-sm text-slate-400">
@@ -155,7 +155,7 @@ export default function QuoteGenerator() {
             type="date"
             value={vigenciaHasta}
             onChange={(e) => setVigenciaHasta(e.target.value)}
-            className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
         </label>
       </div>
@@ -167,7 +167,7 @@ export default function QuoteGenerator() {
           onChange={(e) => setNotas(e.target.value)}
           rows={2}
           placeholder="Incluye vigilancia 24h, cámaras, techo..."
-          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </label>
 
@@ -182,7 +182,7 @@ export default function QuoteGenerator() {
         <button
           onClick={handleEnviarWhatsApp}
           disabled={!cotizacionValida}
-          className="flex-1 rounded-lg bg-emerald-500/90 hover:bg-emerald-500 text-white font-medium py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 rounded-lg bg-yellow-500/90 hover:bg-yellow-500 text-slate-900 font-medium py-3 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           Enviar por WhatsApp
         </button>

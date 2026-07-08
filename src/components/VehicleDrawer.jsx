@@ -69,7 +69,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
       <button
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/70"
       />
 
       {/* panel */}
@@ -108,7 +108,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 placeholder="0"
-                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </label>
 
@@ -129,7 +129,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value.toUpperCase())}
                 placeholder="ABC-123"
-                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </label>
 
@@ -139,7 +139,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                 onClick={() => setTipo('eventual')}
                 className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
                   tipo === 'eventual'
-                    ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400'
+                    ? 'border-yellow-500 bg-yellow-500/15 text-yellow-400'
                     : 'border-slate-700 text-slate-400'
                 }`}
               >
@@ -150,7 +150,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                 onClick={() => setTipo('mensual')}
                 className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
                   tipo === 'mensual'
-                    ? 'border-emerald-500 bg-emerald-500/15 text-emerald-400'
+                    ? 'border-yellow-500 bg-yellow-500/15 text-yellow-400'
                     : 'border-slate-700 text-slate-400'
                 }`}
               >
@@ -165,7 +165,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                   <select
                     value={clienteId}
                     onChange={(e) => handleClienteExistenteChange(e.target.value)}
-                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   >
                     <option value="">-- Nuevo cliente --</option>
                     {clientesMensuales.map((c) => (
@@ -183,7 +183,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                       type="text"
                       value={nombreCliente}
                       onChange={(e) => setNombreCliente(e.target.value)}
-                      className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     />
                   </label>
                 )}
@@ -195,7 +195,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
                     placeholder="300 123 4567"
-                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   />
                 </label>
 
@@ -206,7 +206,7 @@ export default function VehicleDrawer({ puesto, onClose }) {
                     value={fechaFin}
                     onChange={(e) => setFechaFin(e.target.value)}
                     disabled={!!clienteId}
-                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
+                    className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:opacity-50"
                   />
                 </label>
               </>
@@ -220,14 +220,14 @@ export default function VehicleDrawer({ puesto, onClose }) {
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 placeholder="0"
-                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="mt-1 w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </label>
 
             <button
               onClick={handleRegistrar}
               disabled={!placa.trim() || (tipo === 'mensual' && !clienteId && !fechaFin)}
-              className="w-full rounded-lg bg-emerald-500/90 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 transition-colors"
+              className="w-full rounded-lg bg-yellow-500/90 hover:bg-yellow-500 disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-medium py-3 transition-colors"
             >
               Registrar ingreso
             </button>

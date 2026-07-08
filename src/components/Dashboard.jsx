@@ -58,7 +58,7 @@ export default function Dashboard() {
           label="Ventas de hoy"
           value={formatCOP(totalVentasHoy)}
           sub={`${movimientosHoy.length} movimiento(s)`}
-          accent="text-emerald-400"
+          accent="text-yellow-400"
         />
         <SummaryCard
           label="Puestos ocupados"
